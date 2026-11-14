@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
-import { resolveToPixels, createUnitResolver } from './resolve-to-pixels'
+import { resolveToPixels } from './resolve-to-pixels'
 
 describe('resolveToPixels', () => {
   let container: HTMLDivElement
@@ -191,58 +191,5 @@ describe('resolveToPixels', () => {
         Object.defineProperty(HTMLElement.prototype, 'offsetWidth', originalOffsetWidth)
       }
     })
-  })
-})
-
-describe('createUnitResolver', () => {
-  let container: HTMLDivElement
-
-  beforeEach(() => {
-    container = document.createElement('div')
-    document.body.appendChild(container)
-  })
-
-  afterEach(() => {
-    container.remove()
-  })
-
-  it('caches resolved values', () => {
-    const resolver = createUnitResolver(container)
-    document.documentElement.style.fontSize = '16px'
-
-    const first = resolver.resolve('2rem')
-    const second = resolver.resolve('2rem')
-
-    expect(first).toBe(second)
-    expect(first).toBe(32)
-
-    document.documentElement.style.fontSize = ''
-  })
-
-  it('clears cache on demand', () => {
-    const resolver = createUnitResolver(container)
-    document.documentElement.style.fontSize = '16px'
-
-    resolver.resolve('2rem')
-    resolver.clearCache()
-    document.documentElement.style.fontSize = '20px'
-
-    const result = resolver.resolve('2rem')
-    expect(result).toBe(40)
-
-    document.documentElement.style.fontSize = ''
-  })
-
-  it('returns cache size', () => {
-    const resolver = createUnitResolver(container)
-    document.documentElement.style.fontSize = '16px'
-
-    resolver.resolve('1rem')
-    resolver.resolve('2rem')
-    resolver.resolve('1rem')
-
-    expect(resolver.cacheSize).toBe(2)
-
-    document.documentElement.style.fontSize = ''
   })
 })

@@ -2,7 +2,7 @@ import { parseSize } from './parse-size'
 import { buildRows } from './build-rows'
 import { layoutRows } from './layout-rows'
 import { applyPlacements } from './apply-placements'
-import { createUnitResolver, type UnitResolver } from './utils/resolve-to-pixels'
+import { resolveToPixels } from './utils/resolve-to-pixels'
 import type { Align, FillMode } from './types'
 
 const MAX_COLUMNS = 12
@@ -14,13 +14,10 @@ class SmartGrid extends HTMLElement {
 
   private mutationObserver: MutationObserver | null = null
   private resizeObserver: ResizeObserver | null = null
-  private unitResolver: UnitResolver | null = null
   private effectiveColumnsValue = 0
-  private lastCssProps = ''
   private lastWidth = -1
 
   connectedCallback(): void {
-    this.unitResolver = createUnitResolver(this)
     this.syncColumnsProperty()
     this.setupObservers()
     this.applyLayout()
@@ -31,7 +28,6 @@ class SmartGrid extends HTMLElement {
     this.mutationObserver = null
     this.resizeObserver?.disconnect()
     this.resizeObserver = null
-    this.unitResolver = null
     window.visualViewport?.removeEventListener('resize', this.handleViewportResize)
   }
 
@@ -133,14 +129,9 @@ class SmartGrid extends HTMLElement {
 
   private setupObservers(): void {
     this.mutationObserver = new MutationObserver((mutations) => {
-      const relevant = mutations.filter((mutation) => this.affectsLayout(mutation))
-      if (relevant.length === 0) {
-        return
+      if (mutations.some((mutation) => this.affectsLayout(mutation))) {
+        this.applyLayout()
       }
-      if (relevant.some((mutation) => mutation.type === 'attributes')) {
-        this.unitResolver?.clearCache()
-      }
-      this.applyLayout()
     })
     this.mutationObserver.observe(this, {
       childList: true,
@@ -151,7 +142,7 @@ class SmartGrid extends HTMLElement {
 
     this.resizeObserver = new ResizeObserver(() => {
       if (this.contentWidth() !== this.lastWidth) {
-        this.handleResize()
+        this.applyLayout()
       }
     })
     this.resizeObserver.observe(this)
@@ -167,12 +158,6 @@ class SmartGrid extends HTMLElement {
   }
 
   private handleViewportResize = (): void => {
-    this.unitResolver?.clearCache()
-    this.applyLayout()
-  }
-
-  private handleResize(): void {
-    this.unitResolver?.clearCache()
     this.applyLayout()
   }
 
@@ -185,7 +170,7 @@ class SmartGrid extends HTMLElement {
   }
 
   private calculateEffectiveColumns(width: number, items: HTMLElement[]): number {
-    if (width <= 0 || !this.unitResolver) {
+    if (width <= 0) {
       return this.columns
     }
 
@@ -193,8 +178,6 @@ class SmartGrid extends HTMLElement {
     if (!minWidths) {
       return this.columns
     }
-
-    this.invalidateCacheIfStylesChanged(minWidths)
 
     const gap = this.resolveGap(minWidths)
     const sizesPresent = this.collectItemSizes(items)
@@ -223,24 +206,12 @@ class SmartGrid extends HTMLElement {
       large,
       gap: styles.getPropertyValue('--smart-grid-gap').trim(),
       computedColumnGap: styles.columnGap,
-      fontSize: styles.fontSize,
-      rootFontSize: getComputedStyle(document.documentElement).fontSize,
-      viewportWidth: window.innerWidth,
-      viewportHeight: window.innerHeight,
-    }
-  }
-
-  private invalidateCacheIfStylesChanged(config: MinWidthConfig): void {
-    const cacheKey = `${config.small}|${config.medium}|${config.large}|${config.gap}|${config.computedColumnGap}|${config.fontSize}|${config.rootFontSize}|${config.viewportWidth}|${config.viewportHeight}`
-    if (cacheKey !== this.lastCssProps) {
-      this.unitResolver!.clearCache()
-      this.lastCssProps = cacheKey
     }
   }
 
   private resolveGap(config: MinWidthConfig): number {
     if (config.gap) {
-      return this.unitResolver!.resolve(config.gap)
+      return resolveToPixels(config.gap, this)
     }
     return parseFloat(config.computedColumnGap) || 0
   }
@@ -253,16 +224,16 @@ class SmartGrid extends HTMLElement {
     let maxMinWidthPerUnit = 0
 
     if (config.small) {
-      maxMinWidthPerUnit = this.unitResolver!.resolve(config.small)
+      maxMinWidthPerUnit = resolveToPixels(config.small, this)
     }
 
     if (sizesPresent.has('medium') && config.medium) {
-      const perUnit = this.unitResolver!.resolve(config.medium) / 2
+      const perUnit = resolveToPixels(config.medium, this) / 2
       maxMinWidthPerUnit = Math.max(maxMinWidthPerUnit, perUnit)
     }
 
     if (sizesPresent.has('large') && config.large) {
-      const perUnit = this.unitResolver!.resolve(config.large) / 3
+      const perUnit = resolveToPixels(config.large, this) / 3
       maxMinWidthPerUnit = Math.max(maxMinWidthPerUnit, perUnit)
     }
 
@@ -281,10 +252,6 @@ interface MinWidthConfig {
   large: string
   gap: string
   computedColumnGap: string
-  fontSize: string
-  rootFontSize: string
-  viewportWidth: number
-  viewportHeight: number
 }
 
 declare global {

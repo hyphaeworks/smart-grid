@@ -1,42 +1,6 @@
 const PIXELS_PER_INCH = 96
 const UNIT_PATTERN = /^(-?\d*\.?\d+)\s*(px|rem|em|vw|vh|vmin|vmax|cm|mm|in|pt|pc)?$/i
 
-export interface UnitResolver {
-  resolve(cssValue: string): number
-  clearCache(): void
-  readonly cacheSize: number
-}
-
-export function createUnitResolver(element: Element): UnitResolver {
-  const cache = new Map<string, number>()
-
-  return {
-    resolve(cssValue: string): number {
-      const trimmed = cssValue.trim()
-      if (!trimmed) {
-        return 0
-      }
-
-      const cached = cache.get(trimmed)
-      if (cached !== undefined) {
-        return cached
-      }
-
-      const result = resolveToPixels(trimmed, element)
-      cache.set(trimmed, result)
-      return result
-    },
-
-    clearCache(): void {
-      cache.clear()
-    },
-
-    get cacheSize(): number {
-      return cache.size
-    },
-  }
-}
-
 export function resolveToPixels(cssValue: string, element: Element): number {
   const trimmed = cssValue.trim()
   if (!trimmed) {

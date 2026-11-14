@@ -18,8 +18,10 @@ jobs:
           cache: npm
 
       - run: npm ci
+      - run: npm run typecheck
       - run: npm test
       - run: npm run build
+      - run: test -f dist/index.d.ts
 
   e2e:
     runs-on: ubuntu-latest

@@ -287,6 +287,12 @@ interface MinWidthConfig {
   viewportHeight: number
 }
 
+declare global {
+  interface HTMLElementTagNameMap {
+    'smart-grid': SmartGrid
+  }
+}
+
 if (!customElements.get('smart-grid')) {
   customElements.define('smart-grid', SmartGrid)
 }

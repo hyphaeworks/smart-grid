@@ -96,6 +96,25 @@ describe('SmartGrid web component', () => {
     })
   })
 
+  describe('properties', () => {
+    it('reflect to attributes and relayout', () => {
+      const grid = createGrid({ columns: '3' })
+      addItems(grid, 4)
+      container.appendChild(grid)
+
+      grid.columns = 4
+      grid.fill = 'none'
+      grid.fillLast = 'equal-extra'
+      grid.align = 'center'
+
+      expect(grid.getAttribute('columns')).toBe('4')
+      expect(grid.getAttribute('fill')).toBe('none')
+      expect(grid.getAttribute('fill-last')).toBe('equal-extra')
+      expect(grid.getAttribute('align')).toBe('center')
+      expect(grid.effectiveColumns).toBe(4)
+    })
+  })
+
   describe('align attribute', () => {
     it('defaults to start and ignores unknown values', () => {
       expect(createGrid().align).toBe('start')

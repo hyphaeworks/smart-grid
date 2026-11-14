@@ -47,8 +47,16 @@ class SmartGrid extends HTMLElement {
     return Math.max(1, Math.min(MAX_COLUMNS, value))
   }
 
+  set columns(value: number) {
+    this.setAttribute('columns', String(value))
+  }
+
   get fill(): FillMode {
     return this.getAttribute('fill') === 'none' ? 'none' : 'equal-extra'
+  }
+
+  set fill(value: FillMode) {
+    this.setAttribute('fill', value)
   }
 
   get fillLast(): FillMode {
@@ -62,9 +70,17 @@ class SmartGrid extends HTMLElement {
     return this.fill
   }
 
+  set fillLast(value: FillMode) {
+    this.setAttribute('fill-last', value)
+  }
+
   get align(): Align {
     const attribute = this.getAttribute('align')
     return attribute === 'center' || attribute === 'end' ? attribute : 'start'
+  }
+
+  set align(value: Align) {
+    this.setAttribute('align', value)
   }
 
   get effectiveColumns(): number {

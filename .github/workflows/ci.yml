@@ -25,21 +25,11 @@ jobs:
 
   e2e:
     runs-on: ubuntu-latest
+    container: mcr.microsoft.com/playwright:v1.57.0-noble
     steps:
       - uses: actions/checkout@v4
 
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 20
-          cache: npm
-
       - run: npm ci
-
-      - name: Install Playwright browsers
-        run: npx playwright install --with-deps chromium
-
-      - name: Build demo
-        run: npm run build:demo
 
       - name: Run Playwright tests
         run: npm run test:e2e

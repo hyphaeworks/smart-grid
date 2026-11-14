@@ -1,0 +1,156 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SmartGrid Cases</title>
+    <link rel="stylesheet" href="dist/smart-grid.css">
+    <style>
+        body { font-family: system-ui, sans-serif; margin: 0; padding: 1.5rem; background: #f8fafc; color: #1e293b; }
+        h1 { margin: 0 0 .25rem; font-size: 1.4rem; }
+        #summary { margin: 0 0 1.5rem; color: #475569; }
+        .case { margin-bottom: 1.75rem; }
+        .case h2 { font-size: 1rem; margin: 0 0 .25rem; display: flex; gap: .5rem; align-items: baseline; }
+        .status { font-size: .75rem; padding: 0 .5rem; border-radius: 999px; background: #e2e8f0; }
+        .case.pass .status { background: #bbf7d0; color: #14532d; }
+        .case.fail .status { background: #fecaca; color: #7f1d1d; }
+        .markup, .result { font: .75rem ui-monospace, monospace; color: #475569; margin: .15rem 0; white-space: pre-wrap; }
+        .case.fail .result { color: #b91c1c; }
+        .frame { width: 1000px; outline: 1px dashed #94a3b8; margin-top: .5rem; }
+        smart-grid > div { background: #6366f1; color: white; border-radius: 4px; padding: .4rem; font: 600 .75rem system-ui; text-align: center; }
+        smart-grid > [data-size="medium"] { background: #0ea5e9; }
+        smart-grid > [data-size="large"] { background: #0f766e; }
+    </style>
+</head>
+<body>
+    <h1>Layout cases</h1>
+    <p id="summary">Running…</p>
+    <main id="cases"></main>
+
+    <script type="module" src="dist/smart-grid.js"></script>
+    <script type="module">
+        const cases = [
+            { title: '19 items in 12 columns do not overflow', attributes: { columns: 12 }, items: 19, expect: '1x12 / 1x7' },
+            { title: '11 items in 7 columns at phone width do not overflow', width: 390, attributes: { columns: 7 }, items: 11, expect: '1x7 / 1x4' },
+            { title: 'Large and small items keep their rows', attributes: { columns: 6 }, items: 'L S S S L L', expect: '3 1 1 1 / 3 3' },
+            { title: 'fill="none" keeps the balanced 3 + 2 + 2 rows', attributes: { columns: 3, fill: 'none' }, items: 7, expect: '1 1 1 / 1 1 / 1 1' },
+            { title: 'fill="none" keeps a medium item twice as wide', attributes: { columns: 4, fill: 'none' }, items: 'S M S', expect: '1 2 1' },
+            { title: 'A stretched medium item stays twice as wide as a small one', attributes: { columns: 3 }, items: 'S M S', expect: '1 2 / 3' },
+            { title: 'An unknown data-size counts as small', attributes: { columns: 3 }, items: 'constructor S S', expect: '1 1 1' },
+            { title: 'Padding does not change the column count when a child is added', attributes: { columns: 3, style: 'box-sizing: border-box; width: 700px; padding: 0 100px; --smart-grid-gap: 0px; --smart-grid-min-width: 200px' }, items: 2, append: 1, expect: '1 1 / 2' },
+            { title: 'align="center": last row centred at full-row item width', attributes: { columns: 3, 'fill-last': 'none', align: 'center' }, items: 5, expect: '1 1 1 / 1 1' },
+            { title: 'align="center" with fill="none" and an odd gap', attributes: { columns: 4, fill: 'none', align: 'center' }, items: 7, expect: '1x4 / 1x3' },
+            { title: 'align="end" with mixed sizes', attributes: { columns: 4, fill: 'none', align: 'end' }, items: 'M S S M', expect: '2 1 1 / 2' },
+            { title: '4 items in 3 columns rebalance to 2 + 2', attributes: { columns: 3 }, items: 4, expect: '1.5 1.5 / 1.5 1.5' },
+            { title: '6 items fill 3 columns exactly', attributes: { columns: 3 }, items: 6, expect: '1 1 1 / 1 1 1' },
+            { title: '7 items in 3 columns stretch to 3 + 2 + 2', attributes: { columns: 3 }, items: 7, expect: '1 1 1 / 1.5 1.5 / 1.5 1.5' },
+            { title: 'fill-last="none" keeps the last row at unit width', attributes: { columns: 3, 'fill-last': 'none' }, items: 7, expect: '1 1 1 / 1.5 1.5 / 1 1' },
+            { title: '7 medium items in 6 columns balance to 3 + 2 + 2', attributes: { columns: 6 }, items: 'M M M M M M M', expect: '2 2 2 / 3 3 / 3 3' },
+        ]
+
+        const sizeNames = { S: 'small', M: 'medium', L: 'large' }
+        const wait = (milliseconds) => new Promise((resolve) => setTimeout(resolve, milliseconds))
+        const sum = (numbers) => numbers.reduce((total, number) => total + number, 0)
+        const format = (rows) => rows.map((row) => row.map((value) => +value.toFixed(2)).join(' ')).join(' / ')
+
+        function parseExpectation(text) {
+            return text.split('/').map((row) => row.trim().split(/\s+/).flatMap((token) => {
+                const [width, count = 1] = token.split('x').map(Number)
+                return Array(count).fill(width)
+            }))
+        }
+
+        function createItem(index, size) {
+            const item = document.createElement('div')
+            item.textContent = String(index + 1)
+            if (size) {
+                item.dataset.size = Object.hasOwn(sizeNames, size) ? sizeNames[size] : size
+            }
+            return item
+        }
+
+        function render(definition) {
+            const section = document.createElement('section')
+            section.className = 'case'
+            const grid = document.createElement('smart-grid')
+            for (const [name, value] of Object.entries(definition.attributes)) {
+                grid.setAttribute(name, String(value))
+            }
+            const sizes = typeof definition.items === 'number' ? Array(definition.items).fill('') : definition.items.split(' ')
+            grid.append(...sizes.map((size, index) => createItem(index, size)))
+            section.innerHTML = '<h2><span class="title"></span><span class="status">…</span></h2><div class="markup"></div><div class="result"></div><div class="frame"></div>'
+            section.querySelector('.title').textContent = definition.title
+            section.querySelector('.markup').textContent = grid.outerHTML.replace(/>.*$/s, '>') + `  expect: ${definition.expect}`
+            section.querySelector('.frame').style.width = `${definition.width ?? 1000}px`
+            section.querySelector('.frame').append(grid)
+            document.getElementById('cases').append(section)
+            return { definition, section, grid }
+        }
+
+        function measure(grid) {
+            const styles = getComputedStyle(grid)
+            const paddingLeft = parseFloat(styles.paddingLeft)
+            const left = grid.getBoundingClientRect().left + parseFloat(styles.borderLeftWidth) + paddingLeft
+            const rows = new Map()
+            for (const item of grid.children) {
+                const box = item.getBoundingClientRect()
+                const top = Math.round(box.top)
+                rows.set(top, [...(rows.get(top) ?? []), { x: box.left - left, width: box.width }])
+            }
+            return {
+                width: grid.clientWidth - paddingLeft - parseFloat(styles.paddingRight),
+                gap: parseFloat(styles.columnGap) || 0,
+                rows: [...rows.entries()].sort((a, b) => a[0] - b[0]).map(([, row]) => row.sort((a, b) => a.x - b.x)),
+            }
+        }
+
+        function check({ definition, section, grid }) {
+            const expected = parseExpectation(definition.expect)
+            const { width, gap, rows } = measure(grid)
+            const pitch = (width + gap) / Math.max(...expected.map(sum))
+            const alignment = { center: 0.5, end: 1 }[grid.getAttribute('align')] ?? 0
+            const problems = []
+
+            if (grid.scrollWidth > grid.clientWidth + 1) {
+                problems.push(`overflows: ${grid.scrollWidth}px wide in ${grid.clientWidth}px`)
+            }
+            if (rows.length !== expected.length || rows.some((row, index) => row.length !== expected[index].length)) {
+                problems.push('items are in the wrong rows')
+            } else {
+                expected.forEach((row, rowIndex) => {
+                    let x = alignment * (width - (sum(row) * pitch - gap))
+                    row.forEach((units, itemIndex) => {
+                        const item = rows[rowIndex][itemIndex]
+                        const itemWidth = units * pitch - gap
+                        if (Math.abs(item.width - itemWidth) > 1.5 || Math.abs(item.x - x) > 1.5) {
+                            problems.push(`row ${rowIndex + 1} item ${itemIndex + 1}: at ${item.x.toFixed(0)}px, ${item.width.toFixed(0)}px wide (expected ${x.toFixed(0)}px, ${itemWidth.toFixed(0)}px)`)
+                        }
+                        x += itemWidth + gap
+                    })
+                })
+            }
+
+            const actual = format(rows.map((row) => row.map((item) => (item.width + gap) / pitch)))
+            section.classList.add(problems.length ? 'fail' : 'pass')
+            section.querySelector('.status').textContent = problems.length ? 'fail' : 'pass'
+            section.querySelector('.result').textContent = `actual: ${actual}${problems.length ? '\n' + problems.join('\n') : ''}`
+            return { title: definition.title, problems }
+        }
+
+        const rendered = cases.map(render)
+        await wait(200)
+        for (const { definition, grid } of rendered) {
+            for (let index = 0; index < (definition.append ?? 0); index++) {
+                grid.append(createItem(grid.children.length, ''))
+            }
+        }
+        await wait(200)
+
+        const results = rendered.map(check)
+        const failing = results.filter((result) => result.problems.length).length
+        document.getElementById('summary').textContent = `${results.length - failing} of ${results.length} cases pass`
+        window.caseResults = results
+        document.documentElement.dataset.ready = 'true'
+    </script>
+</body>
+</html>

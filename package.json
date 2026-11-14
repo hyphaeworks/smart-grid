@@ -6,7 +6,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/wazum/smart-grid.git"
+    "url": "git+https://github.com/hyphaeworks/smart-grid.git"
   },
   "type": "module",
   "main": "dist/smart-grid.js",

@@ -62,31 +62,25 @@ function buildBalancedRows(sizes: number[], itemsPerRow: number): Row[] {
   return rows
 }
 
-function calculateBalancedDistribution(items: number, cols: number, minRows: number): number[] {
-  for (let fullRows = minRows - 1; fullRows >= 0; fullRows--) {
-    const result = tryDistribution(items, cols, minRows, fullRows)
-    if (result.length && isBalanced(result, cols)) {
+function calculateBalancedDistribution(items: number, itemsPerRow: number, minRows: number): number[] {
+  for (let fullRows = minRows - 1; fullRows > 0; fullRows--) {
+    const result = tryDistribution(items, itemsPerRow, minRows, fullRows)
+    if (result.length && isBalanced(result, itemsPerRow)) {
       return result
     }
   }
-  return fillGreedy(items, cols)
+  return distributeRemaining(items, minRows)
 }
 
-function tryDistribution(items: number, cols: number, minRows: number, fullRows: number): number[] {
-  const itemsInFullRows = fullRows * cols
-  const remainingItems = items - itemsInFullRows
+function tryDistribution(items: number, itemsPerRow: number, minRows: number, fullRows: number): number[] {
+  const remainingItems = items - fullRows * itemsPerRow
   const remainingRows = minRows - fullRows
 
-  if (remainingRows <= 0 || remainingItems < 0) {
+  if (remainingItems < 0 || Math.ceil(remainingItems / remainingRows) > itemsPerRow) {
     return []
   }
 
-  const itemsPerRemainingRow = Math.ceil(remainingItems / remainingRows)
-  if (itemsPerRemainingRow > cols) {
-    return []
-  }
-
-  const rows = Array(fullRows).fill(cols) as number[]
+  const rows = Array(fullRows).fill(itemsPerRow) as number[]
   return rows.concat(distributeRemaining(remainingItems, remainingRows))
 }
 
@@ -94,8 +88,8 @@ function distributeRemaining(items: number, rows: number): number[] {
   const distribution: number[] = []
   let remaining = items
 
-  for (let i = 0; i < rows; i++) {
-    const rowSize = Math.ceil(remaining / (rows - i))
+  for (let row = 0; row < rows; row++) {
+    const rowSize = Math.ceil(remaining / (rows - row))
     distribution.push(rowSize)
     remaining -= rowSize
   }
@@ -103,23 +97,6 @@ function distributeRemaining(items: number, rows: number): number[] {
   return distribution
 }
 
-function isBalanced(rows: number[], cols: number): boolean {
-  if (!rows.length) {
-    return false
-  }
-  const lastRow = rows[rows.length - 1]
-  return rows.length === 1 || lastRow / cols >= 0.34
-}
-
-function fillGreedy(items: number, cols: number): number[] {
-  const rows: number[] = []
-  let remaining = items
-
-  while (remaining > 0) {
-    const rowSize = Math.min(remaining, cols)
-    rows.push(rowSize)
-    remaining -= rowSize
-  }
-
-  return rows
+function isBalanced(rows: number[], itemsPerRow: number): boolean {
+  return rows[rows.length - 1] / itemsPerRow >= 0.34
 }

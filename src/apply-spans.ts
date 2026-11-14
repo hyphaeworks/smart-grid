@@ -8,7 +8,3 @@ export function applySpans(items: HTMLElement[], spans: number[]): void {
     }
   })
 }
-
-export function clearSpans(items: HTMLElement[]): void {
-  items.forEach((item) => item.style.removeProperty('grid-column'))
-}

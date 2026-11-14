@@ -1,9 +1,9 @@
 import { parseSize } from './parse-size'
 import { buildRows } from './build-rows'
-import { calculateSpans } from './calculate-spans'
-import { applySpans, clearSpans } from './apply-spans'
+import { layoutRows } from './layout-rows'
+import { applySpans } from './apply-spans'
 import { createUnitResolver, type UnitResolver } from './utils/resolve-to-pixels'
-import type { FillMode, Row } from './types'
+import type { FillMode } from './types'
 
 const MAX_COLUMNS = 12
 const DEFAULT_COLUMNS = 3
@@ -79,38 +79,10 @@ class SmartGrid extends HTMLElement {
 
     const sizes = items.map((item) => parseSize(item, maxColumns))
     const rows = buildRows(sizes, maxColumns)
+    const layout = layoutRows(rows, { fill: this.fill, fillLast: this.fillLast })
 
-    this.applyLayoutWithRows(items, rows)
-  }
-
-  private applyLayoutWithRows(items: HTMLElement[], rows: Row[]): void {
-    const uniqueRowSizes = [...new Set(rows.map((row) => row.length))]
-    const allItemsSameSize = rows.flat().every((item) => item.size === 1)
-
-    const fillLastDiffers = this.fillLast !== this.fill
-    if (uniqueRowSizes.length === 1 && allItemsSameSize && this.fill === 'equal-extra' && !fillLastDiffers) {
-      const uniformSize = uniqueRowSizes[0]
-      if (uniformSize === this.columns) {
-        this.style.removeProperty('--grid-columns')
-      } else {
-        this.style.setProperty('--grid-columns', uniformSize.toString())
-      }
-      clearSpans(items)
-      return
-    }
-
-    if (this.fill === 'none') {
-      const maxRowTotal = Math.max(...rows.map((row) => row.reduce((sum, item) => sum + item.size, 0)))
-      this.style.setProperty('--grid-columns', maxRowTotal.toString())
-      clearSpans(items)
-      return
-    }
-
-    const gridColumns = calculateGridColumns(rows)
-    this.style.setProperty('--grid-columns', gridColumns.toString())
-
-    const spans = calculateSpans(rows, gridColumns, this.fill, this.fillLast)
-    applySpans(items, spans)
+    this.style.setProperty('--grid-columns', layout.columns.toString())
+    applySpans(items, layout.spans)
   }
 
   private setupObservers(): void {
@@ -260,26 +232,6 @@ interface MinWidthConfig {
   rootFontSize: string
   viewportWidth: number
   viewportHeight: number
-}
-
-function calculateGridColumns(rows: Row[]): number {
-  const rowLengths = rows.map((row) => row.length)
-  const rowTotals = rows.map((row) => row.reduce((sum, item) => sum + item.size, 0))
-
-  const allSameLength = rowLengths.every((len) => len === rowLengths[0])
-  if (allSameLength) {
-    return Math.max(...rowTotals)
-  }
-
-  return rowLengths.reduce((acc, len) => leastCommonMultiple(acc, len), 1)
-}
-
-function leastCommonMultiple(a: number, b: number): number {
-  return (a * b) / greatestCommonDivisor(a, b)
-}
-
-function greatestCommonDivisor(a: number, b: number): number {
-  return b === 0 ? a : greatestCommonDivisor(b, a % b)
 }
 
 customElements.define('smart-grid', SmartGrid)

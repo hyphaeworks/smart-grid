@@ -99,11 +99,11 @@ describe('SmartGrid web component', () => {
   describe('data-size attribute', () => {
     it('items default to small (1 unit)', () => {
       const grid = createGrid({ columns: '3' })
-      addItems(grid, 3)
+      const items = addItems(grid, 3)
       container.appendChild(grid)
 
-      const computedStyle = getComputedStyle(grid)
-      expect(computedStyle.getPropertyValue('--grid-columns').trim()).toBe('')
+      expect(grid.style.getPropertyValue('--grid-columns')).toBe('3')
+      items.forEach((item) => expect(item.style.gridColumn).toBe(''))
     })
 
     it('medium items take 2 units each', () => {
@@ -207,7 +207,7 @@ describe('SmartGrid web component', () => {
       return new Promise<void>((resolve) => {
         setTimeout(() => {
           const computedStyle = getComputedStyle(grid)
-          expect(computedStyle.getPropertyValue('--grid-columns').trim()).toBe('')
+          expect(computedStyle.getPropertyValue('--grid-columns').trim()).toBe('3')
           resolve()
         }, 0)
       })

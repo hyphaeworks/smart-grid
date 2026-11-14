@@ -1,6 +1,7 @@
 # `<smart-grid>` Web Component
 
 <p>
+  <a href="https://www.npmjs.com/package/@hyphaeworks/smart-grid"><img src="https://img.shields.io/npm/v/@hyphaeworks/smart-grid?style=for-the-badge&logo=npm&logoColor=white&label=npm&labelColor=24273a&color=b5ead7" alt="npm version"></a>
   <a href="https://github.com/hyphaeworks/smart-grid/actions/workflows/ci.yml"><img src="https://img.shields.io/github/actions/workflow/status/hyphaeworks/smart-grid/ci.yml?branch=main&style=for-the-badge&logo=githubactions&logoColor=white&label=tests&labelColor=24273a" alt="Tests"></a>
   <a href="https://developer.mozilla.org/en-US/docs/Web/API/Web_components"><img src="https://img.shields.io/badge/web%20component-custom%20element-ffb997?style=for-the-badge&logo=webcomponentsdotorg&logoColor=white&labelColor=24273a" alt="Web component"></a>
   <a href="https://www.typescriptlang.org/"><img src="https://img.shields.io/badge/TypeScript-types%20included-a7c7e7?style=for-the-badge&logo=typescript&logoColor=white&labelColor=24273a" alt="TypeScript types included"></a>

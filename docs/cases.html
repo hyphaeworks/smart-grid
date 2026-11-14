@@ -36,7 +36,7 @@
             { title: 'fill="none" keeps the balanced 3 + 2 + 2 rows', attributes: { columns: 3, fill: 'none' }, items: 7, expect: '1 1 1 / 1 1 / 1 1' },
             { title: 'fill="none" keeps a medium item twice as wide', attributes: { columns: 4, fill: 'none' }, items: 'S M S', expect: '1 2 1' },
             { title: 'A stretched medium item stays twice as wide as a small one', attributes: { columns: 3 }, items: 'S M S', expect: '1 2 / 3' },
-            { title: 'An unknown data-size counts as small', attributes: { columns: 3 }, items: 'constructor S S', expect: '1 1 1' },
+            { title: 'An unknown data-size counts as small', attributes: { columns: 3 }, items: 'constructor M', expect: '1 2' },
             { title: 'Padding does not change the column count when a child is added', attributes: { columns: 3, style: 'box-sizing: border-box; width: 700px; padding: 0 100px; --smart-grid-gap: 0px; --smart-grid-min-width: 200px' }, items: 2, append: 1, expect: '1 1 / 2' },
             { title: 'align="center": last row centred at full-row item width', attributes: { columns: 3, 'fill-last': 'none', align: 'center' }, items: 5, expect: '1 1 1 / 1 1' },
             { title: 'align="center" with fill="none" and an odd gap', attributes: { columns: 4, fill: 'none', align: 'center' }, items: 7, expect: '1x4 / 1x3' },

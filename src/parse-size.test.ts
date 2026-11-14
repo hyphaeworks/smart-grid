@@ -32,6 +32,11 @@ describe('parseSize', () => {
     expect(parseSize(createElement(''), 3)).toBe(1)
   })
 
+  it('object prototype names → 1', () => {
+    expect(parseSize(createElement('constructor'), 3)).toBe(1)
+    expect(parseSize(createElement('toString'), 3)).toBe(1)
+  })
+
   it('large capped to maxColumns=2 → 2', () => {
     expect(parseSize(createElement('large'), 2)).toBe(2)
   })

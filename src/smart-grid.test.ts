@@ -101,6 +101,21 @@ describe('SmartGrid web component', () => {
     })
   })
 
+  describe('lifecycle', () => {
+    it('does not lay out while disconnected', () => {
+      const applyLayout = vi.spyOn(SmartGrid.prototype as unknown as { applyLayout(): void }, 'applyLayout')
+      const grid = createGrid({ columns: '4', fill: 'none' })
+      addItems(grid, 3)
+      grid.setAttribute('align', 'center')
+
+      expect(applyLayout).not.toHaveBeenCalled()
+
+      container.appendChild(grid)
+      expect(applyLayout).toHaveBeenCalledTimes(1)
+      applyLayout.mockRestore()
+    })
+  })
+
   describe('properties', () => {
     it('reflect to attributes and relayout', () => {
       const grid = createGrid({ columns: '3' })

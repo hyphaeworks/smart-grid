@@ -36,6 +36,9 @@ class SmartGrid extends HTMLElement {
   }
 
   attributeChangedCallback(): void {
+    if (!this.isConnected) {
+      return
+    }
     this.syncColumnsProperty()
     this.applyLayout()
   }

@@ -25,7 +25,7 @@ jobs:
 
   e2e:
     runs-on: ubuntu-latest
-    container: mcr.microsoft.com/playwright:v1.57.0-noble
+    container: mcr.microsoft.com/playwright:v1.65.1-noble
     steps:
       - uses: actions/checkout@v4
 

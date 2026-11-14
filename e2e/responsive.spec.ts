@@ -92,11 +92,11 @@ test.describe('SmartGrid responsive behavior', () => {
 
     // First 3 items span 2 each
     const firstItemSpan = await items.first().evaluate((el) => el.style.gridColumn)
-    expect(firstItemSpan).toBe('span 2')
+    expect(firstItemSpan).toBe('1 / span 2')
 
     // Last 2 items span 3 each (expanded to fill row)
     const fourthItemSpan = await items.nth(3).evaluate((el) => el.style.gridColumn)
-    expect(fourthItemSpan).toBe('span 3')
+    expect(fourthItemSpan).toBe('1 / span 3')
   })
 
   test('7-item grid shows 3+2+2 layout', async ({ page }) => {
@@ -114,11 +114,11 @@ test.describe('SmartGrid responsive behavior', () => {
 
     // First 3 items should span 2 columns each
     const firstItemSpan = await items.first().evaluate((el) => el.style.gridColumn)
-    expect(firstItemSpan).toBe('span 2')
+    expect(firstItemSpan).toBe('1 / span 2')
 
     // Items 4-7 should span 3 columns each (2 per row)
     const fourthItemSpan = await items.nth(3).evaluate((el) => el.style.gridColumn)
-    expect(fourthItemSpan).toBe('span 3')
+    expect(fourthItemSpan).toBe('1 / span 3')
   })
 
   test('fill="equal-extra" (default) - items fill row width', async ({ page }) => {
@@ -131,10 +131,10 @@ test.describe('SmartGrid responsive behavior', () => {
     // 7 items → [3, 2, 2] with gridColumns=6
     // Row 1: span 2, Rows 2-3: span 3 (expanded)
     const firstItemSpan = await items.first().evaluate((el) => el.style.gridColumn)
-    expect(firstItemSpan).toBe('span 2')
+    expect(firstItemSpan).toBe('1 / span 2')
 
     const fourthItemSpan = await items.nth(3).evaluate((el) => el.style.gridColumn)
-    expect(fourthItemSpan).toBe('span 3')
+    expect(fourthItemSpan).toBe('1 / span 3')
 
     await expect(grid).toHaveScreenshot('fill-expand.png')
   })
@@ -148,12 +148,18 @@ test.describe('SmartGrid responsive behavior', () => {
     await expect(grid).toBeVisible()
     await expect(items).toHaveCount(7)
 
-    // fill="none": items keep size 1, no expansion
-    // All items have span 1 (or no span set)
-    const spans = await items.evaluateAll((els) => els.map((el) => (el as HTMLElement).style.gridColumn))
-    spans.forEach((span) => {
-      expect(span === '' || span === 'span 1').toBe(true)
-    })
+    const placements = await items.evaluateAll((els) =>
+      els.map((el) => `${(el as HTMLElement).style.gridRow}: ${(el as HTMLElement).style.gridColumn}`),
+    )
+    expect(placements).toEqual([
+      '1: 1 / span 1',
+      '1: 2 / span 1',
+      '1: 3 / span 1',
+      '2: 1 / span 1',
+      '2: 2 / span 1',
+      '3: 1 / span 1',
+      '3: 2 / span 1',
+    ])
 
     await expect(grid).toHaveScreenshot('fill-none.png')
   })
@@ -173,18 +179,18 @@ test.describe('SmartGrid responsive behavior', () => {
 
     // Row 1 (3 items): each gets span 2
     const firstItemSpan = await items.first().evaluate((el) => el.style.gridColumn)
-    expect(firstItemSpan).toBe('span 2')
+    expect(firstItemSpan).toBe('1 / span 2')
 
     // Row 2 (2 items, NOT last): each gets span 3 (expanded)
     const fourthItemSpan = await items.nth(3).evaluate((el) => el.style.gridColumn)
-    expect(fourthItemSpan).toBe('span 3')
+    expect(fourthItemSpan).toBe('1 / span 3')
 
     // Row 3 (2 items, last) with fill-last="none": span 2 (same as row 1, NOT expanded)
     const sixthItemSpan = await items.nth(5).evaluate((el) => el.style.gridColumn)
-    expect(sixthItemSpan).toBe('span 2')
+    expect(sixthItemSpan).toBe('1 / span 2')
 
     const seventhItemSpan = await items.nth(6).evaluate((el) => el.style.gridColumn)
-    expect(seventhItemSpan).toBe('span 2')
+    expect(seventhItemSpan).toBe('3 / span 2')
   })
 
   test('mixed item sizes with data-size attribute', async ({ page }, testInfo) => {
@@ -194,7 +200,7 @@ test.describe('SmartGrid responsive behavior', () => {
     const items = grid.locator('> div')
 
     await expect(grid).toBeVisible()
-    // Wait for ResizeObserver to trigger layout (50ms debounce + buffer)
+    // Wait for the ResizeObserver to lay out the newly visible grid
     await page.waitForTimeout(100)
     await expect(items).toHaveCount(8)
 

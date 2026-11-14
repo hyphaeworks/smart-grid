@@ -40,6 +40,11 @@ describe('SmartGrid web component', () => {
       expect(customElements.get('smart-grid')).toBeDefined()
     })
 
+    it('can be loaded twice without throwing', async () => {
+      vi.resetModules()
+      await expect(import('./smart-grid')).resolves.toBeDefined()
+    })
+
     it('can be created via document.createElement', () => {
       const grid = document.createElement('smart-grid')
       expect(grid).toBeInstanceOf(SmartGrid)

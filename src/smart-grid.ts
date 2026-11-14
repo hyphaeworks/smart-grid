@@ -284,6 +284,8 @@ interface MinWidthConfig {
   viewportHeight: number
 }
 
-customElements.define('smart-grid', SmartGrid)
+if (!customElements.get('smart-grid')) {
+  customElements.define('smart-grid', SmartGrid)
+}
 
 export { SmartGrid }

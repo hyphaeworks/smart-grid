@@ -1,7 +1,12 @@
 # `<smart-grid>` Web Component
 
-[![CI](https://github.com/wazum/smart-grid/actions/workflows/ci.yml/badge.svg)](https://github.com/wazum/smart-grid/actions/workflows/ci.yml)
-[![TypeScript](https://img.shields.io/badge/TypeScript-Ready-blue.svg)](https://www.typescriptlang.org/)
+<p>
+  <a href="https://github.com/wazum/smart-grid/actions/workflows/ci.yml"><img src="https://img.shields.io/github/actions/workflow/status/wazum/smart-grid/ci.yml?branch=main&style=for-the-badge&logo=githubactions&logoColor=white&label=tests&labelColor=24273a" alt="Tests"></a>
+  <a href="https://developer.mozilla.org/en-US/docs/Web/API/Web_components"><img src="https://img.shields.io/badge/web%20component-custom%20element-ffb997?style=for-the-badge&logo=webcomponentsdotorg&logoColor=white&labelColor=24273a" alt="Web component"></a>
+  <a href="https://www.typescriptlang.org/"><img src="https://img.shields.io/badge/TypeScript-types%20included-a7c7e7?style=for-the-badge&logo=typescript&logoColor=white&labelColor=24273a" alt="TypeScript types included"></a>
+  <a href="package.json"><img src="https://img.shields.io/badge/dependencies-0-b5ead7?style=for-the-badge&logo=npm&logoColor=white&labelColor=24273a" alt="Zero dependencies"></a>
+  <a href="#license"><img src="https://img.shields.io/badge/license-MIT-ffc6d9?style=for-the-badge&logo=opensourceinitiative&logoColor=white&labelColor=24273a" alt="License MIT"></a>
+</p>
 
 **Smart CSS Grid layouts with auto-rebalancing for orphan rows.**
 

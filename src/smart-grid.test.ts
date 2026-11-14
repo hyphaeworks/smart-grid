@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach, afterEach } from 'vitest'
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
 import { SmartGrid } from './smart-grid'
 
 describe('SmartGrid web component', () => {
@@ -245,6 +245,26 @@ describe('SmartGrid web component', () => {
           resolve()
         }, 0)
       })
+    })
+
+    it('lays out once per change and ignores changes inside items', async () => {
+      const grid = createGrid({ columns: '3' })
+      const items = addItems(grid, 3)
+      container.appendChild(grid)
+      const applyLayout = vi.spyOn(grid as unknown as { applyLayout(): void }, 'applyLayout')
+      const settle = () => new Promise((resolve) => setTimeout(resolve, 0))
+
+      grid.appendChild(document.createElement('div'))
+      await settle()
+      await settle()
+      expect(applyLayout).toHaveBeenCalledTimes(1)
+
+      applyLayout.mockClear()
+      items[0].innerHTML = '<span>new content</span>'
+      items[0].querySelector('span')!.style.color = 'red'
+      items[0].className = 'highlighted'
+      await settle()
+      expect(applyLayout).not.toHaveBeenCalled()
     })
 
     it('recalculates when children are removed', () => {

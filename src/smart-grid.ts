@@ -94,6 +94,7 @@ class SmartGrid extends HTMLElement {
 
     this.style.setProperty('--grid-columns', layout.columns.toString())
     applyPlacements(items, layout.placements)
+    this.mutationObserver?.takeRecords()
   }
 
   private contentWidth(): number {
@@ -111,8 +112,11 @@ class SmartGrid extends HTMLElement {
 
   private setupObservers(): void {
     this.mutationObserver = new MutationObserver((mutations) => {
-      const hasAttributeChange = mutations.some((m) => m.type === 'attributes')
-      if (hasAttributeChange) {
+      const relevant = mutations.filter((mutation) => this.affectsLayout(mutation))
+      if (relevant.length === 0) {
+        return
+      }
+      if (relevant.some((mutation) => mutation.type === 'attributes')) {
         this.unitResolver?.clearCache()
       }
       this.applyLayout()
@@ -132,6 +136,13 @@ class SmartGrid extends HTMLElement {
     this.resizeObserver.observe(this)
 
     window.visualViewport?.addEventListener('resize', this.handleViewportResize)
+  }
+
+  private affectsLayout(mutation: MutationRecord): boolean {
+    if (mutation.target === this) {
+      return true
+    }
+    return mutation.attributeName === 'data-size' && mutation.target.parentElement === this
   }
 
   private handleViewportResize = (): void => {

@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { layoutRows } from './layout-rows'
+import { layoutRows, type LayoutOptions } from './layout-rows'
 import type { FillMode, Row } from './types'
 
 function rowsOf(...sizes: number[][]): Row[] {
@@ -46,6 +46,50 @@ describe('layoutRows', () => {
     expect(layout(rowsOf([1, 1, 1], [1, 1], [1, 1]), 'equal-extra', 'none')).toEqual({
       columns: 6,
       spans: [2, 2, 2, 3, 3, 2, 2],
+    })
+  })
+
+  describe('align', () => {
+    function lastRow(rows: Row[], options: LayoutOptions) {
+      const { columns, placements } = layoutRows(rows, options)
+      return { columns, lastRow: placements.slice(-rows[rows.length - 1].length) }
+    }
+
+    it('centres a short row with doubled tracks when the free space is odd', () => {
+      expect(lastRow(rowsOf([1, 1, 1], [1, 1]), { fill: 'equal-extra', fillLast: 'none', align: 'center' })).toEqual({
+        columns: 6,
+        lastRow: [
+          { row: 2, column: 2, span: 2 },
+          { row: 2, column: 4, span: 2 },
+        ],
+      })
+    })
+
+    it('centres a short row without extra tracks when the free space is even', () => {
+      expect(lastRow(rowsOf([1, 1, 1, 1], [1, 1]), { fill: 'none', fillLast: 'none', align: 'center' })).toEqual({
+        columns: 4,
+        lastRow: [
+          { row: 2, column: 2, span: 1 },
+          { row: 2, column: 3, span: 1 },
+        ],
+      })
+    })
+
+    it('moves a short row to the end', () => {
+      expect(lastRow(rowsOf([2, 1, 1], [2]), { fill: 'none', fillLast: 'none', align: 'end' })).toEqual({
+        columns: 4,
+        lastRow: [{ row: 2, column: 3, span: 2 }],
+      })
+    })
+
+    it('does not move stretched rows', () => {
+      expect(lastRow(rowsOf([1, 1, 1], [1, 1]), { fill: 'equal-extra', fillLast: 'equal-extra', align: 'end' })).toEqual({
+        columns: 6,
+        lastRow: [
+          { row: 2, column: 1, span: 3 },
+          { row: 2, column: 4, span: 3 },
+        ],
+      })
     })
   })
 

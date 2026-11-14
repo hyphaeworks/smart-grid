@@ -77,6 +77,7 @@ Items can specify relative widths:
 | `columns`   | `3`           | Maximum columns (1–12)                       |
 | `fill`      | `equal-extra` | How items fill rows: `equal-extra` or `none` |
 | `fill-last` | inherits fill | Override fill behavior for last row only     |
+| `align`     | `start`       | Where rows that do not fill go: `start`, `center` or `end` |
 
 ### Child Attributes
 
@@ -112,6 +113,22 @@ Items can specify relative widths:
 +--+ +--+
 | 4| | 5|      ← gap on right
 +--+ +--+
+```
+
+### Alignment
+
+Rows that keep their item width (`fill="none"`, or the last row with `fill-last="none"`) are placed by `align`:
+
+```html
+<smart-grid columns="3" fill-last="none" align="center">…5 items…</smart-grid>
+```
+```
++--+ +--+ +--+
+| 1| | 2| | 3|
++--+ +--+ +--+
+   +--+ +--+
+   | 4| | 5|   ← same width as above, centred
+   +--+ +--+
 ```
 
 ### CSS Custom Properties

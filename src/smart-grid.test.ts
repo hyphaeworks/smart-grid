@@ -96,6 +96,32 @@ describe('SmartGrid web component', () => {
     })
   })
 
+  describe('align attribute', () => {
+    it('defaults to start and ignores unknown values', () => {
+      expect(createGrid().align).toBe('start')
+      expect(createGrid({ align: 'middle' }).align).toBe('start')
+    })
+
+    it('centres the short last row', () => {
+      const grid = createGrid({ columns: '3', 'fill-last': 'none', align: 'center' })
+      const items = addItems(grid, 5)
+      container.appendChild(grid)
+
+      expect(grid.style.getPropertyValue('--grid-columns')).toBe('6')
+      expect(items.slice(3).map((item) => item.style.gridColumn)).toEqual(['2 / span 2', '4 / span 2'])
+    })
+
+    it('relayouts when align changes', () => {
+      const grid = createGrid({ columns: '3', 'fill-last': 'none' })
+      const items = addItems(grid, 5)
+      container.appendChild(grid)
+
+      grid.setAttribute('align', 'end')
+
+      expect(items[4].style.gridColumn).toBe('3 / span 1')
+    })
+  })
+
   describe('data-size attribute', () => {
     it('items default to small (1 unit)', () => {
       const grid = createGrid({ columns: '3' })

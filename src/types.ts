@@ -1,4 +1,5 @@
 export type FillMode = 'equal-extra' | 'none'
+export type Align = 'start' | 'center' | 'end'
 export type SemanticSize = 'small' | 'medium' | 'large'
 
 export const SIZE_UNITS: Record<SemanticSize, number> = {

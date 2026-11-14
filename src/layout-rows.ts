@@ -1,8 +1,9 @@
-import type { FillMode, Row } from './types'
+import type { Align, FillMode, Row } from './types'
 
 export interface LayoutOptions {
   fill: FillMode
   fillLast: FillMode
+  align?: Align
 }
 
 export interface Placement {
@@ -16,7 +17,9 @@ export interface Layout {
   placements: Placement[]
 }
 
-export function layoutRows(rows: Row[], { fill, fillLast }: LayoutOptions): Layout {
+const FREE_SPACE_BEFORE: Record<Align, number> = { start: 0, center: 0.5, end: 1 }
+
+export function layoutRows(rows: Row[], { fill, fillLast, align = 'start' }: LayoutOptions): Layout {
   if (rows.length === 0) {
     return { columns: 0, placements: [] }
   }
@@ -24,14 +27,18 @@ export function layoutRows(rows: Row[], { fill, fillLast }: LayoutOptions): Layo
   const totals = rows.map((row) => row.reduce((total, item) => total + item.size, 0))
   const unitColumns = Math.max(...totals)
   const stretched = rows.map((_, index) => (index === rows.length - 1 ? fillLast : fill) === 'equal-extra')
-  const columns = totals.reduce(
-    (count, total, index) => leastCommonMultiple(count, stretched[index] ? total : unitColumns),
-    1,
-  )
+  const columns = totals.reduce((count, total, index) => {
+    if (stretched[index]) {
+      return leastCommonMultiple(count, total)
+    }
+    const halfUnitOffset = align === 'center' && (unitColumns - total) % 2 === 1
+    return leastCommonMultiple(count, halfUnitOffset ? unitColumns * 2 : unitColumns)
+  }, 1)
 
   const placements = rows.flatMap((row, index) => {
     const tracksPerUnit = columns / (stretched[index] ? totals[index] : unitColumns)
-    let column = 1
+    const freeTracks = columns - totals[index] * tracksPerUnit
+    let column = 1 + freeTracks * FREE_SPACE_BEFORE[align]
     return row.map((item) => {
       const placement = { row: index + 1, column, span: item.size * tracksPerUnit }
       column += placement.span

@@ -5,7 +5,7 @@
   <a href="https://developer.mozilla.org/en-US/docs/Web/API/Web_components"><img src="https://img.shields.io/badge/web%20component-custom%20element-ffb997?style=for-the-badge&logo=webcomponentsdotorg&logoColor=white&labelColor=24273a" alt="Web component"></a>
   <a href="https://www.typescriptlang.org/"><img src="https://img.shields.io/badge/TypeScript-types%20included-a7c7e7?style=for-the-badge&logo=typescript&logoColor=white&labelColor=24273a" alt="TypeScript types included"></a>
   <a href="package.json"><img src="https://img.shields.io/badge/dependencies-0-b5ead7?style=for-the-badge&logo=npm&logoColor=white&labelColor=24273a" alt="Zero dependencies"></a>
-  <a href="#license"><img src="https://img.shields.io/badge/license-MIT-ffc6d9?style=for-the-badge&logo=opensourceinitiative&logoColor=white&labelColor=24273a" alt="License MIT"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-ffc6d9?style=for-the-badge&logo=opensourceinitiative&logoColor=white&labelColor=24273a" alt="License MIT"></a>
 </p>
 
 **Smart CSS Grid layouts with auto-rebalancing for orphan rows.**
@@ -29,7 +29,7 @@ SmartGrid rebalances automatically:
 ## Installation
 
 ```bash
-npm install @wazum/smart-grid
+npm install @hyphaeworks/smart-grid
 ```
 
 ## Usage
@@ -37,8 +37,8 @@ npm install @wazum/smart-grid
 With a bundler:
 
 ```js
-import '@wazum/smart-grid'
-import '@wazum/smart-grid/styles'
+import '@hyphaeworks/smart-grid'
+import '@hyphaeworks/smart-grid/styles'
 ```
 
 Or directly in the page:

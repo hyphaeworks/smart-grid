@@ -1,12 +1,17 @@
 {
-  "name": "@wazum/smart-grid",
-  "version": "0.0.1",
+  "name": "@hyphaeworks/smart-grid",
+  "version": "0.1.0",
   "description": "Smart CSS Grid web component with auto-rebalancing",
   "author": "Wolfgang Klinger <wolfgang@wazum.com>",
   "license": "MIT",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/hyphaeworks/smart-grid.git"
+  },
+  "homepage": "https://hyphaeworks.github.io/smart-grid/",
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
   },
   "type": "module",
   "main": "dist/smart-grid.js",
@@ -25,6 +30,7 @@
     "dev": "vite",
     "build": "vite build && tsc -p tsconfig.build.json",
     "typecheck": "tsc --noEmit",
+    "prepublishOnly": "npm run typecheck && npm test && npm run build",
     "build:demo": "npm run build && cp -r dist docs/",
     "preview": "npm run build:demo && npx serve docs -p 4173",
     "test": "vitest run",

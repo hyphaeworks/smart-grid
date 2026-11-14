@@ -1,6 +1,6 @@
 {
   "name": "@hyphaeworks/smart-grid",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "Smart CSS Grid web component with auto-rebalancing",
   "author": "Wolfgang Klinger <wolfgang@wazum.com>",
   "license": "MIT",

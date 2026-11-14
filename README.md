@@ -7,7 +7,7 @@
 
 A zero-dependency web component that creates balanced grid layouts — no more lonely single items on the last row.
 
-[**Live Demo**](https://wazum.github.io/smart-grid/)
+[**Live Demo**](https://wazum.github.io/smart-grid/) · [Layout cases](https://wazum.github.io/smart-grid/cases.html) (every layout rule, checked in the browser)
 
 ## The Problem
 
@@ -42,6 +42,15 @@ npm install @wazum/smart-grid
 ```
 
 ## Usage
+
+With a bundler:
+
+```js
+import '@wazum/smart-grid'
+import '@wazum/smart-grid/styles'
+```
+
+Or directly in the page:
 
 ```html
 <script type="module" src="dist/smart-grid.js"></script>
@@ -87,9 +96,21 @@ Items can specify relative widths:
 
 ### Properties
 
-| Property           | Type     | Description                                        |
-|--------------------|----------|----------------------------------------------------|
-| `effectiveColumns` | `number` | Current column count after responsive adjustments  |
+| Property           | Type                               | Description                                       |
+|--------------------|------------------------------------|---------------------------------------------------|
+| `columns`          | `number`                           | Reflects the `columns` attribute                  |
+| `fill`             | `'equal-extra' \| 'none'`           | Reflects the `fill` attribute                     |
+| `fillLast`         | `'equal-extra' \| 'none'`           | Reflects the `fill-last` attribute                |
+| `align`            | `'start' \| 'center' \| 'end'`       | Reflects the `align` attribute                    |
+| `effectiveColumns` | `number` (read-only)               | Current column count after responsive adjustments |
+
+```js
+const grid = document.querySelector('smart-grid') // typed as SmartGrid
+grid.columns = 4
+grid.align = 'center'
+```
+
+Adding, removing or resizing children (`data-size`) relayouts automatically.
 
 ### Fill Modes
 
@@ -149,7 +170,8 @@ smart-grid {
 ```bash
 npm install
 npm test          # Unit tests (Vitest)
-npm run test:e2e  # E2E tests (Playwright)
+npm run test:e2e  # E2E tests (Playwright), including docs/cases.html
+npm run typecheck
 npm run build     # Production build
 ```
 

@@ -314,7 +314,8 @@
     <section>
         <h2>Usage</h2>
         <div class="usage-code">
-            <pre><span class="tag">&lt;script</span> <span class="attr">type</span>=<span class="val">"module"</span> <span class="attr">src</span>=<span class="val">"smart-grid.js"</span><span class="tag">&gt;&lt;/script&gt;</span>
+            <pre><span class="tag">&lt;link</span> <span class="attr">rel</span>=<span class="val">"stylesheet"</span> <span class="attr">href</span>=<span class="val">"smart-grid.css"</span><span class="tag">&gt;</span>
+<span class="tag">&lt;script</span> <span class="attr">type</span>=<span class="val">"module"</span> <span class="attr">src</span>=<span class="val">"smart-grid.js"</span><span class="tag">&gt;&lt;/script&gt;</span>
 
 <span class="tag">&lt;smart-grid</span> <span class="attr">columns</span>=<span class="val">"3"</span><span class="tag">&gt;</span>
   <span class="tag">&lt;div&gt;</span>Item 1<span class="tag">&lt;/div&gt;</span>
@@ -324,7 +325,7 @@
 <span class="tag">&lt;/smart-grid&gt;</span></pre>
         </div>
         <p class="info">
-            Include the script, then use <code>&lt;smart-grid&gt;</code> with a <code>columns</code> attribute.
+            Include the stylesheet and the script, then use <code>&lt;smart-grid&gt;</code> with a <code>columns</code> attribute.
         </p>
     </section>
 
@@ -524,7 +525,47 @@
         </smart-grid>
     </section>
 
-    <!-- Example 7: Responsive min-width -->
+    <!-- Example 7: align -->
+    <section>
+        <h2>
+            align
+            <span class="toggle" role="tablist" data-target="demo-align">
+                <button role="tab" aria-selected="false" aria-controls="demo-align-start" data-mode="start">Start</button>
+                <button role="tab" aria-selected="true" aria-controls="demo-align-center" data-mode="center">Center</button>
+                <button role="tab" aria-selected="false" aria-controls="demo-align-end" data-mode="end">End</button>
+            </span>
+        </h2>
+        <p class="info">
+            <code>fill-last="none" align="center"</code> — the short last row keeps the width of the row above and is centred.
+            <code>align</code> applies to every row that does not stretch (also with <code>fill="none"</code>).
+        </p>
+
+        <smart-grid id="demo-align-start" columns="3" fill-last="none" align="start" class="demo-grid" hidden>
+            <div class="card">1</div>
+            <div class="card">2</div>
+            <div class="card">3</div>
+            <div class="card">4</div>
+            <div class="card">5</div>
+        </smart-grid>
+
+        <smart-grid id="demo-align-center" columns="3" fill-last="none" align="center" class="demo-grid">
+            <div class="card">1</div>
+            <div class="card">2</div>
+            <div class="card">3</div>
+            <div class="card">4</div>
+            <div class="card">5</div>
+        </smart-grid>
+
+        <smart-grid id="demo-align-end" columns="3" fill-last="none" align="end" class="demo-grid" hidden>
+            <div class="card">1</div>
+            <div class="card">2</div>
+            <div class="card">3</div>
+            <div class="card">4</div>
+            <div class="card">5</div>
+        </smart-grid>
+    </section>
+
+    <!-- Example 8: Responsive min-width -->
     <section>
         <h2>Responsive with min-width</h2>
         <p class="info">
@@ -610,6 +651,15 @@
                         <button data-value="none" aria-selected="false">none</button>
                     </div>
                 </div>
+
+                <div class="control-group">
+                    <label>Align</label>
+                    <div class="toggle" id="align-toggle">
+                        <button data-value="" aria-selected="true">start</button>
+                        <button data-value="center" aria-selected="false">center</button>
+                        <button data-value="end" aria-selected="false">end</button>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -618,6 +668,7 @@
     </main>
 
     <footer>
+        <a href="cases.html">Layout cases</a> ·
         <a href="https://github.com/wazum/smart-grid">View on GitHub</a>
     </footer>
 
@@ -705,6 +756,10 @@
 
                 document.querySelectorAll('#fill-last-toggle button').forEach(btn => {
                     btn.addEventListener('click', () => this.selectToggle('fill-last-toggle', btn, 'fill-last'))
+                })
+
+                document.querySelectorAll('#align-toggle button').forEach(btn => {
+                    btn.addEventListener('click', () => this.selectToggle('align-toggle', btn, 'align'))
                 })
             },
 

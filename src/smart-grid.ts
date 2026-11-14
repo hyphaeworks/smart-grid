@@ -17,6 +17,7 @@ class SmartGrid extends HTMLElement {
   private unitResolver: UnitResolver | null = null
   private effectiveColumnsValue = 0
   private lastCssProps = ''
+  private lastWidth = -1
 
   connectedCallback(): void {
     this.unitResolver = createUnitResolver(this)
@@ -80,6 +81,7 @@ class SmartGrid extends HTMLElement {
     }
 
     const containerWidth = this.contentWidth()
+    this.lastWidth = containerWidth
     const maxColumns = this.calculateEffectiveColumns(containerWidth, items)
     this.effectiveColumnsValue = maxColumns
 
@@ -128,10 +130,10 @@ class SmartGrid extends HTMLElement {
       attributeFilter: ['class', 'style', 'data-size'],
     })
 
-    let resizeTimeout: ReturnType<typeof setTimeout>
     this.resizeObserver = new ResizeObserver(() => {
-      clearTimeout(resizeTimeout)
-      resizeTimeout = setTimeout(() => this.handleResize(), 50)
+      if (this.contentWidth() !== this.lastWidth) {
+        this.handleResize()
+      }
     })
     this.resizeObserver.observe(this)
 

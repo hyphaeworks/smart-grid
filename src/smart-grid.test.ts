@@ -267,6 +267,36 @@ describe('SmartGrid web component', () => {
       expect(applyLayout).not.toHaveBeenCalled()
     })
 
+    it('relayouts right away when the width changes and ignores height changes', () => {
+      const realResizeObserver = globalThis.ResizeObserver
+      let notifyResize = () => {}
+      vi.stubGlobal(
+        'ResizeObserver',
+        class {
+          constructor(callback: () => void) {
+            notifyResize = callback
+          }
+          observe() {}
+          disconnect() {}
+        },
+      )
+      let width = 900
+      const grid = createGrid({ columns: '3' })
+      Object.defineProperty(grid, 'clientWidth', { get: () => width })
+      addItems(grid, 3)
+      container.appendChild(grid)
+      const applyLayout = vi.spyOn(grid as unknown as { applyLayout(): void }, 'applyLayout')
+
+      notifyResize()
+      expect(applyLayout).not.toHaveBeenCalled()
+
+      width = 500
+      notifyResize()
+      expect(applyLayout).toHaveBeenCalledTimes(1)
+
+      vi.stubGlobal('ResizeObserver', realResizeObserver)
+    })
+
     it('recalculates when children are removed', () => {
       const grid = createGrid({ columns: '3' })
       const items = addItems(grid, 4)

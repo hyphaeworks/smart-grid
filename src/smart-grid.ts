@@ -70,7 +70,7 @@ class SmartGrid extends HTMLElement {
     return this.effectiveColumnsValue
   }
 
-  private applyLayout(width?: number): void {
+  private applyLayout(): void {
     const items = this.getItems()
 
     if (items.length === 0) {
@@ -79,7 +79,7 @@ class SmartGrid extends HTMLElement {
       return
     }
 
-    const containerWidth = width ?? this.clientWidth
+    const containerWidth = this.contentWidth()
     const maxColumns = this.calculateEffectiveColumns(containerWidth, items)
     this.effectiveColumnsValue = maxColumns
 
@@ -94,6 +94,11 @@ class SmartGrid extends HTMLElement {
 
     this.style.setProperty('--grid-columns', layout.columns.toString())
     applyPlacements(items, layout.placements)
+  }
+
+  private contentWidth(): number {
+    const styles = getComputedStyle(this)
+    return this.clientWidth - (parseFloat(styles.paddingLeft) || 0) - (parseFloat(styles.paddingRight) || 0)
   }
 
   private maxTracks(width: number): number {
@@ -120,12 +125,9 @@ class SmartGrid extends HTMLElement {
     })
 
     let resizeTimeout: ReturnType<typeof setTimeout>
-    this.resizeObserver = new ResizeObserver((entries) => {
+    this.resizeObserver = new ResizeObserver(() => {
       clearTimeout(resizeTimeout)
-      resizeTimeout = setTimeout(() => {
-        const width = entries[0]?.contentRect.width ?? this.clientWidth
-        this.handleResize(width)
-      }, 50)
+      resizeTimeout = setTimeout(() => this.handleResize(), 50)
     })
     this.resizeObserver.observe(this)
 
@@ -137,9 +139,9 @@ class SmartGrid extends HTMLElement {
     this.applyLayout()
   }
 
-  private handleResize(width: number): void {
+  private handleResize(): void {
     this.unitResolver?.clearCache()
-    this.applyLayout(width)
+    this.applyLayout()
   }
 
   private syncColumnsProperty(): void {

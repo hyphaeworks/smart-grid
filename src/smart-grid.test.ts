@@ -214,6 +214,19 @@ describe('SmartGrid web component', () => {
 
       expect(grid.style.getPropertyValue('--grid-columns')).toBe('12')
     })
+
+    it('leaves padding out of the width when fitting columns', async () => {
+      const grid = createGrid({ columns: '3' })
+      grid.style.cssText = 'padding: 0 100px; column-gap: 0px; --smart-grid-min-width: 200px'
+      Object.defineProperty(grid, 'clientWidth', { value: 700 })
+      addItems(grid, 2)
+      container.appendChild(grid)
+
+      grid.appendChild(document.createElement('div'))
+      await new Promise((resolve) => setTimeout(resolve, 0))
+
+      expect(grid.effectiveColumns).toBe(2)
+    })
   })
 
   describe('dynamic updates', () => {

@@ -70,6 +70,16 @@
             color: #334155;
         }
 
+        .toggle button:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
+        .control-hint {
+            font-size: 0.7rem;
+            color: #64748b;
+        }
+
         .toggle button:focus-visible {
             outline: 2px solid #3b82f6;
             outline-offset: 2px;
@@ -659,6 +669,7 @@
                         <button data-value="center" aria-selected="false">center</button>
                         <button data-value="end" aria-selected="false">end</button>
                     </div>
+                    <span class="control-hint" id="align-hint">Needs fill or fill-last = none</span>
                 </div>
             </div>
         </div>
@@ -761,6 +772,14 @@
                 document.querySelectorAll('#align-toggle button').forEach(btn => {
                     btn.addEventListener('click', () => this.selectToggle('align-toggle', btn, 'align'))
                 })
+
+                customElements.whenDefined('smart-grid').then(() => this.updateAlignAvailability())
+            },
+
+            updateAlignAvailability() {
+                const hasFixedRows = this.grid.fill === 'none' || this.grid.fillLast === 'none'
+                document.querySelectorAll('#align-toggle button').forEach(btn => btn.disabled = !hasFixedRows)
+                document.getElementById('align-hint').hidden = hasFixedRows
             },
 
             selectToggle(toggleId, selectedBtn, attr) {
@@ -774,6 +793,7 @@
                 } else {
                     this.grid.removeAttribute(attr)
                 }
+                this.updateAlignAvailability()
             },
 
             renderItems(count) {

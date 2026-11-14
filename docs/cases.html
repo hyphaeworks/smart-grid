@@ -3,29 +3,31 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SmartGrid Cases</title>
+    <title>SmartGrid Layout Cases</title>
     <link rel="stylesheet" href="dist/smart-grid.css">
-    <style>
-        body { font-family: system-ui, sans-serif; margin: 0; padding: 1.5rem; background: #f8fafc; color: #1e293b; }
-        h1 { margin: 0 0 .25rem; font-size: 1.4rem; }
-        #summary { margin: 0 0 1.5rem; color: #475569; }
-        .case { margin-bottom: 1.75rem; }
-        .case h2 { font-size: 1rem; margin: 0 0 .25rem; display: flex; gap: .5rem; align-items: baseline; }
-        .status { font-size: .75rem; padding: 0 .5rem; border-radius: 999px; background: #e2e8f0; }
-        .case.pass .status { background: #bbf7d0; color: #14532d; }
-        .case.fail .status { background: #fecaca; color: #7f1d1d; }
-        .markup, .result { font: .75rem ui-monospace, monospace; color: #475569; margin: .15rem 0; white-space: pre-wrap; }
-        .case.fail .result { color: #b91c1c; }
-        .frame { width: 1000px; outline: 1px dashed #94a3b8; margin-top: .5rem; }
-        smart-grid > div { background: #6366f1; color: white; border-radius: 4px; padding: .4rem; font: 600 .75rem system-ui; text-align: center; }
-        smart-grid > [data-size="medium"] { background: #0ea5e9; }
-        smart-grid > [data-size="large"] { background: #0f766e; }
-    </style>
+    <link rel="stylesheet" href="demo.css">
 </head>
 <body>
-    <h1>Layout cases</h1>
-    <p id="summary">Running…</p>
-    <main id="cases"></main>
+    <main>
+    <h1>SmartGrid</h1>
+    <p class="subtitle">
+        Layout cases: every layout rule, rendered and measured in your browser.
+        <a href="./">Back to the demo</a>
+    </p>
+
+    <h2>Result <span class="status" id="summary">running…</span></h2>
+    <p class="info">
+        Each case lists the expected item widths per row in units, rows separated by <code>/</code>.
+        The dashed outline is the space available to the grid.
+    </p>
+
+    <div id="cases"></div>
+    </main>
+
+    <footer>
+        <a href="./">Demo</a> ·
+        <a href="https://github.com/wazum/smart-grid">View on GitHub</a>
+    </footer>
 
     <script type="module" src="dist/smart-grid.js"></script>
     <script type="module">
@@ -62,6 +64,7 @@
 
         function createItem(index, size) {
             const item = document.createElement('div')
+            item.className = 'card'
             item.textContent = String(index + 1)
             if (size) {
                 item.dataset.size = Object.hasOwn(sizeNames, size) ? sizeNames[size] : size
@@ -78,10 +81,10 @@
             }
             const sizes = typeof definition.items === 'number' ? Array(definition.items).fill('') : definition.items.split(' ')
             grid.append(...sizes.map((size, index) => createItem(index, size)))
-            section.innerHTML = '<h2><span class="title"></span><span class="status">…</span></h2><div class="markup"></div><div class="result"></div><div class="frame"></div>'
+            section.innerHTML = '<h2><span class="title"></span><span class="status">…</span></h2><p class="info"><code class="markup"></code></p><p class="info result"></p><div class="frame-scroll"><div class="frame"></div></div>'
             section.querySelector('.title').textContent = definition.title
-            section.querySelector('.markup').textContent = grid.outerHTML.replace(/>.*$/s, '>') + `  expect: ${definition.expect}`
-            section.querySelector('.frame').style.width = `${definition.width ?? 1000}px`
+            section.querySelector('.markup').textContent = grid.outerHTML.replace(/>.*$/s, '>')
+            section.querySelector('.frame').style.width = `${definition.width ?? 800}px`
             section.querySelector('.frame').append(grid)
             document.getElementById('cases').append(section)
             return { definition, section, grid }
@@ -131,9 +134,11 @@
             }
 
             const actual = format(rows.map((row) => row.map((item) => (item.width + gap) / pitch)))
+            const status = section.querySelector('.status')
             section.classList.add(problems.length ? 'fail' : 'pass')
-            section.querySelector('.status').textContent = problems.length ? 'fail' : 'pass'
-            section.querySelector('.result').textContent = `actual: ${actual}${problems.length ? '\n' + problems.join('\n') : ''}`
+            status.classList.add(problems.length ? 'fail' : 'pass')
+            status.textContent = problems.length ? 'fail' : 'pass'
+            section.querySelector('.result').textContent = [`expect: ${definition.expect}`, `actual: ${actual}`, ...problems].join('\n')
             return { title: definition.title, problems }
         }
 
@@ -148,7 +153,9 @@
 
         const results = rendered.map(check)
         const failing = results.filter((result) => result.problems.length).length
-        document.getElementById('summary').textContent = `${results.length - failing} of ${results.length} cases pass`
+        const summary = document.getElementById('summary')
+        summary.textContent = `${results.length - failing} of ${results.length} pass`
+        summary.classList.add(failing ? 'fail' : 'pass')
         window.caseResults = results
         document.documentElement.dataset.ready = 'true'
     </script>

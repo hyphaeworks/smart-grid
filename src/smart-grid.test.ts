@@ -103,7 +103,7 @@ describe('SmartGrid web component', () => {
       container.appendChild(grid)
 
       expect(grid.style.getPropertyValue('--grid-columns')).toBe('3')
-      items.forEach((item) => expect(item.style.gridColumn).toBe(''))
+      expect(items.map((item) => item.style.gridColumn)).toEqual(['1 / span 1', '2 / span 1', '3 / span 1'])
     })
 
     it('medium items take 2 units each', () => {
@@ -111,8 +111,8 @@ describe('SmartGrid web component', () => {
       const items = addItems(grid, 2, ['medium', 'medium'])
       container.appendChild(grid)
 
-      expect(items[0].style.gridColumn).toBe('span 2')
-      expect(items[1].style.gridColumn).toBe('span 2')
+      expect(items[0].style.gridColumn).toBe('1 / span 2')
+      expect(items[1].style.gridColumn).toBe('3 / span 2')
     })
 
     it('mixed sizes create proportional spans', () => {
@@ -120,9 +120,9 @@ describe('SmartGrid web component', () => {
       const items = addItems(grid, 3, ['large', 'medium', 'small'])
       container.appendChild(grid)
 
-      expect(items[0].style.gridColumn).toBe('span 3')
-      expect(items[1].style.gridColumn).toBe('span 2')
-      expect(items[2].style.gridColumn).toBe('')
+      expect(items[0].style.gridColumn).toBe('1 / span 3')
+      expect(items[1].style.gridColumn).toBe('4 / span 2')
+      expect(items[2].style.gridColumn).toBe('6 / span 1')
     })
 
     it('recalculates on data-size change', () => {
@@ -156,9 +156,8 @@ describe('SmartGrid web component', () => {
       const items = addItems(grid, 6)
       container.appendChild(grid)
 
-      items.forEach((item) => {
-        expect(item.style.gridColumn).toBe('')
-      })
+      expect(grid.style.getPropertyValue('--grid-columns')).toBe('3')
+      expect(items.map((item) => item.style.gridRow)).toEqual(['1', '1', '1', '2', '2', '2'])
     })
 
     it('handles empty grid', () => {

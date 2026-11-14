@@ -1,7 +1,7 @@
 import { parseSize } from './parse-size'
 import { buildRows } from './build-rows'
 import { layoutRows } from './layout-rows'
-import { applySpans } from './apply-spans'
+import { applyPlacements } from './apply-placements'
 import { createUnitResolver, type UnitResolver } from './utils/resolve-to-pixels'
 import type { FillMode } from './types'
 
@@ -82,7 +82,7 @@ class SmartGrid extends HTMLElement {
     const layout = layoutRows(rows, { fill: this.fill, fillLast: this.fillLast })
 
     this.style.setProperty('--grid-columns', layout.columns.toString())
-    applySpans(items, layout.spans)
+    applyPlacements(items, layout.placements)
   }
 
   private setupObservers(): void {

@@ -8,12 +8,22 @@ function rowsOf(...sizes: number[][]): Row[] {
 }
 
 function layout(rows: Row[], fill: FillMode = 'equal-extra', fillLast: FillMode = fill) {
-  return layoutRows(rows, { fill, fillLast })
+  const { columns, placements } = layoutRows(rows, { fill, fillLast })
+  return { columns, spans: placements.map((placement) => placement.span) }
 }
 
 describe('layoutRows', () => {
   it('returns no tracks for no rows', () => {
     expect(layout([])).toEqual({ columns: 0, spans: [] })
+  })
+
+  it('places each item at an explicit row and start column', () => {
+    expect(layoutRows(rowsOf([1, 2], [1, 1]), { fill: 'none', fillLast: 'none' }).placements).toEqual([
+      { row: 1, column: 1, span: 1 },
+      { row: 1, column: 2, span: 2 },
+      { row: 2, column: 1, span: 1 },
+      { row: 2, column: 2, span: 1 },
+    ])
   })
 
   it('keeps a medium item twice as wide as a small one in a stretched row', () => {

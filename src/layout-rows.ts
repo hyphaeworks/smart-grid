@@ -5,14 +5,20 @@ export interface LayoutOptions {
   fillLast: FillMode
 }
 
+export interface Placement {
+  row: number
+  column: number
+  span: number
+}
+
 export interface Layout {
   columns: number
-  spans: number[]
+  placements: Placement[]
 }
 
 export function layoutRows(rows: Row[], { fill, fillLast }: LayoutOptions): Layout {
   if (rows.length === 0) {
-    return { columns: 0, spans: [] }
+    return { columns: 0, placements: [] }
   }
 
   const totals = rows.map((row) => row.reduce((total, item) => total + item.size, 0))
@@ -23,12 +29,17 @@ export function layoutRows(rows: Row[], { fill, fillLast }: LayoutOptions): Layo
     1,
   )
 
-  const spans = rows.flatMap((row, index) => {
+  const placements = rows.flatMap((row, index) => {
     const tracksPerUnit = columns / (stretched[index] ? totals[index] : unitColumns)
-    return row.map((item) => item.size * tracksPerUnit)
+    let column = 1
+    return row.map((item) => {
+      const placement = { row: index + 1, column, span: item.size * tracksPerUnit }
+      column += placement.span
+      return placement
+    })
   })
 
-  return { columns, spans }
+  return { columns, placements }
 }
 
 function leastCommonMultiple(first: number, second: number): number {

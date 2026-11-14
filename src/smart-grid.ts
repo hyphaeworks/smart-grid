@@ -7,6 +7,7 @@ import type { Align, FillMode } from './types'
 
 const MAX_COLUMNS = 12
 const DEFAULT_COLUMNS = 3
+const MIN_TRACK_WIDTH = 1
 
 class SmartGrid extends HTMLElement {
   static observedAttributes = ['columns', 'fill', 'fill-last', 'align']
@@ -84,10 +85,23 @@ class SmartGrid extends HTMLElement {
 
     const sizes = items.map((item) => parseSize(item, maxColumns))
     const rows = buildRows(sizes, maxColumns)
-    const layout = layoutRows(rows, { fill: this.fill, fillLast: this.fillLast, align: this.align })
+    const layout = layoutRows(rows, {
+      fill: this.fill,
+      fillLast: this.fillLast,
+      align: this.align,
+      maxTracks: this.maxTracks(containerWidth),
+    })
 
     this.style.setProperty('--grid-columns', layout.columns.toString())
     applyPlacements(items, layout.placements)
+  }
+
+  private maxTracks(width: number): number {
+    if (width <= 0) {
+      return Infinity
+    }
+    const gap = parseFloat(getComputedStyle(this).columnGap) || 0
+    return Math.floor((width + gap) / (MIN_TRACK_WIDTH + gap))
   }
 
   private setupObservers(): void {

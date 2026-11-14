@@ -93,6 +93,34 @@ describe('layoutRows', () => {
     })
   })
 
+  describe('maxTracks', () => {
+    const twelveAndSeven = () => rowsOf(Array(12).fill(1), Array(7).fill(1))
+
+    it('stretches rows exactly while the tracks fit', () => {
+      expect(layoutRows(twelveAndSeven(), { fill: 'equal-extra', fillLast: 'equal-extra', maxTracks: 84 }).columns).toBe(84)
+    })
+
+    it('keeps short rows at unit width when stretching them needs too many tracks', () => {
+      const { columns, placements } = layoutRows(twelveAndSeven(), { fill: 'equal-extra', fillLast: 'equal-extra', maxTracks: 59 })
+
+      expect(columns).toBe(12)
+      expect(placements.slice(12).map((placement) => placement.column)).toEqual([1, 2, 3, 4, 5, 6, 7])
+      expect(placements.every((placement) => placement.span === 1)).toBe(true)
+    })
+
+    it('aligns the rows it stops stretching', () => {
+      const { columns, placements } = layoutRows(twelveAndSeven(), {
+        fill: 'equal-extra',
+        fillLast: 'equal-extra',
+        align: 'center',
+        maxTracks: 59,
+      })
+
+      expect(columns).toBe(24)
+      expect(placements[12]).toEqual({ row: 2, column: 6, span: 2 })
+    })
+  })
+
   it('every stretched row spans all tracks', () => {
     const rows = rowsOf([2, 1, 3], [1, 1, 1, 1], [2, 2])
     const { columns, spans } = layout(rows)

@@ -204,6 +204,18 @@ describe('SmartGrid web component', () => {
     })
   })
 
+  describe('narrow containers', () => {
+    it('does not create more tracks than the width can hold with its gaps', () => {
+      const grid = createGrid({ columns: '12' })
+      grid.style.columnGap = '16px'
+      Object.defineProperty(grid, 'clientWidth', { value: 1000 })
+      addItems(grid, 19)
+      container.appendChild(grid)
+
+      expect(grid.style.getPropertyValue('--grid-columns')).toBe('12')
+    })
+  })
+
   describe('dynamic updates', () => {
     it('recalculates when children are added', () => {
       const grid = createGrid({ columns: '3' })

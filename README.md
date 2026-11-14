@@ -131,6 +131,8 @@ Rows that keep their item width (`fill="none"`, or the last row with `fill-last=
    +--+ +--+
 ```
 
+If stretching a short row exactly would need more grid tracks than fit the width (for example rows of 12 and 7 items with a gap), that row keeps its item width and follows `align` instead of overflowing.
+
 ### CSS Custom Properties
 
 ```css

@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="480" height="44" viewBox="0 0 480 44" role="img" aria-label="A large, a medium and a small item in 6 columns, 3, 2 and 1 units wide">
+<title>A large, a medium and a small item in 6 columns, 3, 2 and 1 units wide</title>
+<g font-family="system-ui, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="600">
+<rect x="0.00" y="0.00" width="236.00" height="44.00" rx="6" fill="#94a3b8"/><text x="118.00" y="22.00" fill="#1e293b" text-anchor="middle" dominant-baseline="central">large</text>
+<rect x="244.00" y="0.00" width="154.67" height="44.00" rx="6" fill="#cbd5e1"/><text x="321.33" y="22.00" fill="#334155" text-anchor="middle" dominant-baseline="central">medium</text>
+<rect x="406.67" y="0.00" width="73.33" height="44.00" rx="6" fill="#e2e8f0"/><text x="443.33" y="22.00" fill="#334155" text-anchor="middle" dominant-baseline="central">small</text>
+</g>
+</svg>

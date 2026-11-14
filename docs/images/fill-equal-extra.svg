@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="480" height="148" viewBox="0 0 480 148" role="img" aria-label="7 items in 3 columns: 3 items, then two rows of 2 stretched items">
+<title>7 items in 3 columns: 3 items, then two rows of 2 stretched items</title>
+<g font-family="system-ui, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="600">
+<rect x="0.00" y="0.00" width="154.67" height="44.00" rx="6" fill="#e2e8f0"/><text x="77.33" y="22.00" fill="#334155" text-anchor="middle" dominant-baseline="central">1</text>
+<rect x="162.67" y="0.00" width="154.67" height="44.00" rx="6" fill="#e2e8f0"/><text x="240.00" y="22.00" fill="#334155" text-anchor="middle" dominant-baseline="central">2</text>
+<rect x="325.33" y="0.00" width="154.67" height="44.00" rx="6" fill="#e2e8f0"/><text x="402.67" y="22.00" fill="#334155" text-anchor="middle" dominant-baseline="central">3</text>
+<rect x="0.00" y="52.00" width="236.00" height="44.00" rx="6" fill="#d1fae5"/><text x="118.00" y="74.00" fill="#065f46" text-anchor="middle" dominant-baseline="central">4</text>
+<rect x="244.00" y="52.00" width="236.00" height="44.00" rx="6" fill="#d1fae5"/><text x="362.00" y="74.00" fill="#065f46" text-anchor="middle" dominant-baseline="central">5</text>
+<rect x="0.00" y="104.00" width="236.00" height="44.00" rx="6" fill="#d1fae5"/><text x="118.00" y="126.00" fill="#065f46" text-anchor="middle" dominant-baseline="central">6</text>
+<rect x="244.00" y="104.00" width="236.00" height="44.00" rx="6" fill="#d1fae5"/><text x="362.00" y="126.00" fill="#065f46" text-anchor="middle" dominant-baseline="central">7</text>
+</g>
+</svg>

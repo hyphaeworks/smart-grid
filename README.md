@@ -13,27 +13,13 @@ A zero-dependency web component that creates balanced grid layouts — no more l
 
 Traditional grids leave lonely orphans:
 
-```
-+---+ +---+ +---+
-| 1 | | 2 | | 3 |
-+---+ +---+ +---+
-+---+
-| 4 |  <- orphan
-+---+
-```
+![A plain grid: items 1 to 3 in the first row, item 4 alone in the second row](docs/images/problem.svg)
 
 ## The Solution
 
 SmartGrid rebalances automatically:
 
-```
-+------+ +------+
-|  1   | |  2   |
-+------+ +------+
-+------+ +------+
-|  3   | |  4   |
-+------+ +------+
-```
+![SmartGrid: two rows of two items](docs/images/solution.svg)
 
 ## Installation
 
@@ -77,6 +63,8 @@ Items can specify relative widths:
 </smart-grid>
 ```
 
+![A large, a medium and a small item, 3, 2 and 1 units wide](docs/images/sizes.svg)
+
 ## API
 
 ### Attributes
@@ -114,27 +102,13 @@ Adding, removing or resizing children (`data-size`) relayouts automatically.
 
 ### Fill Modes
 
-**`fill="equal-extra"`** (default) — Items expand to fill the row:
-```
-7 items, 3 columns → [3, 2, 2]
-+--+ +--+ +--+
-| 1| | 2| | 3|  ← 3 items
-+--+ +--+ +--+
-+----+ +----+
-|  4 | |  5 |   ← 2 items, expanded
-+----+ +----+
-```
+**`fill="equal-extra"`** (default): items expand to fill the row. 7 items in 3 columns:
 
-**`fill="none"`** — Items keep their original size:
-```
-7 items, 3 columns → gaps allowed
-+--+ +--+ +--+
-| 1| | 2| | 3|
-+--+ +--+ +--+
-+--+ +--+
-| 4| | 5|      ← gap on right
-+--+ +--+
-```
+![7 items in 3 columns: 3 items, then two rows of 2 stretched items](docs/images/fill-equal-extra.svg)
+
+**`fill="none"`**: items keep their width and leave a gap:
+
+![7 items in 3 columns: 3 items, then two rows of 2 items with an empty slot](docs/images/fill-none.svg)
 
 ### Alignment
 
@@ -143,14 +117,8 @@ Rows that keep their item width (`fill="none"`, or the last row with `fill-last=
 ```html
 <smart-grid columns="3" fill-last="none" align="center">…5 items…</smart-grid>
 ```
-```
-+--+ +--+ +--+
-| 1| | 2| | 3|
-+--+ +--+ +--+
-   +--+ +--+
-   | 4| | 5|   ← same width as above, centred
-   +--+ +--+
-```
+
+![5 items in 3 columns: 3 items, then 2 items at the same width, centred](docs/images/align-center.svg)
 
 If stretching a short row exactly would need more grid tracks than fit the width (for example rows of 12 and 7 items with a gap), that row keeps its item width and follows `align` instead of overflowing.
 

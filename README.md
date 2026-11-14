@@ -138,16 +138,6 @@ smart-grid {
 }
 ```
 
-## Development
-
-```bash
-npm install
-npm test          # Unit tests (Vitest)
-npm run test:e2e  # E2E tests (Playwright), including docs/cases.html
-npm run typecheck
-npm run build     # Production build
-```
-
 ## License
 
 MIT — Wolfgang Klinger <wolfgang@wazum.com>

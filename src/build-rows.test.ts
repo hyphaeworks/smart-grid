@@ -81,6 +81,18 @@ describe('buildRows', () => {
     })
   })
 
+  describe('balanced distribution (uniform larger items)', () => {
+    it('7 medium items in 6 cols → 3 + 2 + 2', () => {
+      const result = buildRows(Array(7).fill(2), 6)
+      expect(result.map((row) => row.length)).toEqual([3, 2, 2])
+    })
+
+    it('4 large items in 9 cols → 2 + 2', () => {
+      const result = buildRows(Array(4).fill(3), 9)
+      expect(result.map((row) => row.length)).toEqual([2, 2])
+    })
+  })
+
   describe('mixed sizes', () => {
     it('[1,2,1,1] in 4 cols → [[0,1,2], [3]] (greedy: 1+2+1=4)', () => {
       const result = buildRows([1, 2, 1, 1], 4)

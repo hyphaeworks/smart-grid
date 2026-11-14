@@ -5,9 +5,9 @@ export function buildRows(sizes: number[], maxColumns: number): Row[] {
     return []
   }
 
-  const isUniform = sizes.every((s) => s === sizes[0])
-  if (isUniform && sizes[0] === 1) {
-    return buildBalancedRows(sizes, maxColumns)
+  const isUniform = sizes.every((size) => size === sizes[0])
+  if (isUniform) {
+    return buildBalancedRows(sizes, Math.floor(maxColumns / sizes[0]))
   }
 
   return buildGreedyRows(sizes, maxColumns)
@@ -37,15 +37,15 @@ function buildGreedyRows(sizes: number[], maxColumns: number): Row[] {
   return rows
 }
 
-function buildBalancedRows(sizes: number[], maxColumns: number): Row[] {
+function buildBalancedRows(sizes: number[], itemsPerRow: number): Row[] {
   const itemCount = sizes.length
 
-  if (itemCount <= maxColumns) {
+  if (itemCount <= itemsPerRow) {
     return [sizes.map((size, index) => ({ index, size }))]
   }
 
-  const minRows = Math.ceil(itemCount / maxColumns)
-  const distribution = calculateBalancedDistribution(itemCount, maxColumns, minRows)
+  const minRows = Math.ceil(itemCount / itemsPerRow)
+  const distribution = calculateBalancedDistribution(itemCount, itemsPerRow, minRows)
 
   const rows: Row[] = []
   let itemIndex = 0
